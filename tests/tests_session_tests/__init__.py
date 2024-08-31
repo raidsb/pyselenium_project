@@ -1,0 +1,1 @@
+# In this tests we are using session scope. By this, no need to login at each test

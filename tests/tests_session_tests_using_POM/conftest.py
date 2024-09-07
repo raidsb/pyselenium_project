@@ -8,16 +8,8 @@ from selenium.webdriver.common.by import By
 import time
 import logging
 
-# # Set up logging
-# logging.basicConfig(
-#     filename='pyselenium_project_log.txt',  # Specify the log file name
-#     filemode='a',  # Append to the file instead of overwriting ('w' for overwrite)
-#     # Formatting the logging msg: timestamp - severity level - message
-#     format='%(asctime)s - %(levelname)s - %(message)s',  # Log message format
-#     level=logging.INFO  # Log level
-# )
 logger = logging.getLogger(__name__)
-current_number_in_cart = 0
+
 # @pytest.fixture is a decorator used to define a function that serves as a fixture in pytest.
 # Fixtures are responsible for setting up and tearing down resources needed for your tests.
 @pytest.fixture(scope="session")

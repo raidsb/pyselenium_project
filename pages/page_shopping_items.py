@@ -18,16 +18,17 @@ import pages.page_base
 
 logger = logging.getLogger(__name__)
 current_number_in_cart = 0
+
 class PageCart(pages.page_base.PageBase):
     def __init__(self, browser):
         super().__init__(browser=browser)
         self.cart_badge_class = "shopping_cart_badge"
-        self.current_number_in_cart = 0
 
     def add_item_to_cart(self, by, item_selector):
         try:
             selected_item = self.select_web_element_by(by, item_selector)
             assert selected_item.is_displayed(), f"Item selected by {by} with selector {item_selector} is not displayed"
+            logger.info(f"Adding selected item {by} with selector {item_selector}")
             selected_item.click()
         except ElementClickInterceptedException as e:
             #  element is not clickable at the point it is clicked.
@@ -55,38 +56,14 @@ class PageCart(pages.page_base.PageBase):
             logger.error(f"An unexpected error occurred: {e}")
 
     def get_cart_count(self):
-        shopping_cart_element = WebDriverWait(self.browser, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, self.cart_badge_class))
-        )
-        number_of_items_in_cart = float(shopping_cart_element.text.replace('$', ''))
-        logger.debug(f"The shopping cart has {number_of_items_in_cart} items")
-        print("-----------------> ", number_of_items_in_cart)
-        return 0#number_of_items_in_cart
-
-if __file__ == "__main__":
-    import pytest
-    print("---------> running")
-    from selenium import webdriver
-    from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions
-    from selenium.webdriver.common.by import By
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--no-sandbox')
-    options.add_argument('window-size=1920x1080')
-    options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-    # Initialize WebDriver. replace browser with desired one.
-    driver = webdriver.Chrome(options=options)
-    driver.get("https://www.saucedemo.com/")
-    # driver.find_element(By.ID, "user-name").clear()  # example of clearing the text field
-    driver.find_element(By.ID, "user-name").send_keys("standard_user")
-    driver.find_element(By.ID, "password").send_keys("secret_sauce")
-    driver.find_element(By.ID, "login-button").click()
-    WebDriverWait(driver, 5)
-    print("----------->")
-    cart_page = PageCart(driver)
-    cart_page.add_item_to_cart(By.XPATH, "//div[a[div[contains(text(), 'Fleece')]]]/following-sibling::div//button[contains(@class, 'btn btn_primary btn_small btn_inventory')]")
-    print(cart_page.get_cart_count())
+        try:
+            shopping_cart_element = WebDriverWait(self.browser, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, self.cart_badge_class))
+            )
+            number_of_items_in_cart = float(shopping_cart_element.text.replace('$', ''))
+            logger.info(f"The shopping cart has {number_of_items_in_cart} items")
+            return number_of_items_in_cart
+        except TimeoutException:
+            # TODO: check the cart image exists, only then return 0
+            logger.info(f"Shooping cart is empty")
+            return 0

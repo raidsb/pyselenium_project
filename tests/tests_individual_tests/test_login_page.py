@@ -43,4 +43,3 @@ class TestLogin():
 
         # Check if login was successful
         assert h3_element.is_displayed(), "h3 element is not displayed"
-

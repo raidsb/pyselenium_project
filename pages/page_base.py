@@ -12,8 +12,8 @@ class PageBase:
         """
         Select a web element by its name
 
-        :param element_type: string - the html type like button, div, a, select...
-        :param name: name of the element
+        :param by: selenium by element locator - by.id, by.name, by.css_selector...
+        :param select_stmt: name of the element
         :return: a selenium web element
         """
         try:
